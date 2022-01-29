@@ -3,22 +3,39 @@ version: '2'
 services:
   puppet:
     hostname: puppet.local
-    image: puppet:latest
+    image: puppet:db
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ./root:/root
-      - ./environments:/etc/puppetlabs/code/environments
+      - ./production:/etc/puppetlabs/code/environments/production
     networks:
       - lan
     ports:
       - 8140:8140
+  postgres:
+    hostname: postgres.local
+    image: postgres:9.6
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    environment:
+      - POSTGRES_PASSWORD=puppetdb
+      - POSTGRES_USER=puppetdb
+      - POSTGRES_DB=puppetdb
+      - POSTGRES_HOST_AUTH_METHOD="md5"
+    networks:
+      - lan
+    ports:
+      - 5432:5432
   server1:
     hostname: server1.local
     image: server:latest
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    environment:
+      - FACTER_role=role::base
     networks:
       - lan
 
