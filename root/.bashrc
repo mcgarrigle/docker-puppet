@@ -23,4 +23,15 @@ export PS1='[\u@\h \W]\$ '
 export PATH=$PATH:/opt/puppetlabs/bin
 export PATH=/opt/puppetlabs/puppet/bin:$PATH
 
+puppet-query() {
+   # curl -s -G http://localhost:8080/pdb/query/v4/facts --data-urlencode 'query=["=", "name", "operatingsystemmajrelease"]'|jq
+   if [ -z "$2" ]; then
+     Q=""
+   else
+     Q="query=$2"
+   fi
+   curl -s -G http://localhost:8080/pdb/query/v4/$1 --data-urlencode "$Q" | jq
+}
+
+
 cd $HOME
